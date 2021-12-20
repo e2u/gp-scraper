@@ -3,11 +3,15 @@ package util
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	gp_scraper "github.com/e2u/gp-scraper"
 	"github.com/e2u/gp-scraper/internal/vars"
 	"github.com/k3a/html2text"
 	"io"
 	"io/ioutil"
 	"net/http"
+	"net/http/httputil"
+	"os"
 	"time"
 )
 
@@ -18,6 +22,7 @@ var (
 )
 
 func doRequest(ctx context.Context, method string, url string, headers map[string]string, body io.Reader) (int, []byte, error) {
+
 	req, err := http.NewRequestWithContext(ctx, method, url, body)
 	if err != nil {
 		return 0, nil, err
@@ -31,6 +36,11 @@ func doRequest(ctx context.Context, method string, url string, headers map[strin
 
 	if req.Header.Get("User-Agent") == "" {
 		req.Header.Set("User-Agent", vars.DefaultUserAgent)
+	}
+
+	if gp_scraper.Debug {
+		db, _ := httputil.DumpRequest(req, true)
+		fmt.Fprintf(os.Stdout, string(db))
 	}
 
 	resp, err := httpClient.Do(req)

@@ -79,6 +79,26 @@ func TestPages(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "t04",
+			args: args{
+				ctx:   context.TODO(),
+				appId: "com.fastrupee.fastrupeepeefa",
+				opt: &Options{
+					Country:    "in",
+					Language:   "en-IN",
+					PageNumber: 10,
+					Sorting:    sort.Rating,
+				},
+				fn: func(reviews []*Review) bool {
+					// b, _ := json.MarshalIndent(reviews, "", "\t")
+					// fmt.Println(">",string(b))
+					fmt.Println(util.IdentJSONString(reviews))
+					return false
+				},
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
