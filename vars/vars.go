@@ -1,4 +1,4 @@
-package gpscraper
+package vars
 
 var (
 	Debug = false
