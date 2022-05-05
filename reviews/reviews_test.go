@@ -83,7 +83,7 @@ func TestPages(t *testing.T) {
 			name: "t04",
 			args: args{
 				ctx:   context.TODO(),
-				appId: "com.fastrupee.fastrupeepeefa",
+				appId: "com.szxfd.kredit.uat",
 				opt: &Options{
 					Country:    "in",
 					Language:   "en-IN",
