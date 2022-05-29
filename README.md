@@ -12,3 +12,6 @@ Golang to scrape apps data from the Google Play Store.
 * similar.Pages: Get a similar app list of apps by specify app from Google Play Store.
 * suggest.Query: Get suggest query keyword from `market.android.com`. 
 
+
+// Referer
+* https://github.com/JoMingyu/google-play-scraper/blob/14bb6c3e3748744e3a49d4ed4da7b3915531fbcd/google_play_scraper/constants/element.py#L46

@@ -145,9 +145,16 @@ func (a *App) loadDetails(ctx context.Context) error {
 		return errors.New("extract embed data nil")
 	}
 
+	// tb, _ := json.Marshal(data)
+	// fmt.Println(string(tb))
+
 	normPath := func(path string) string {
+	again:
 		path = strings.ReplaceAll(path, " ", "")
 		path = strings.ReplaceAll(path, ",", ".")
+		if strings.Contains(path, " ") {
+			goto again
+		}
 		return path
 	}
 
@@ -191,23 +198,23 @@ func (a *App) loadDetails(ctx context.Context) error {
 		}
 	}()
 	// https://github.com/facundoolano/google-play-scraper/blob/dev/lib/mappers/details.js
-	a.AdSupported = getStringVal("ds:6", "0.12.14.0") != ""
-	a.AndroidVersion = getStringVal("ds:3", "2")
-	a.Available = getIntVal("ds:6", "0.12.11.0") != 0
-	a.ContentRating = getStringVal("ds:6", "0.12.4.0")
-	a.ContentRatingDescription = getStringVal("ds:6", "0.12.4.2.1")
-	a.DescriptionHTML = getStringVal("ds:6", "0.10.0.1")
+	a.AdSupported = getStringVal("ds:4", "1, 2, 48") != ""
+	a.AndroidVersion = getStringVal("ds:4", "1, 2, 140, 1, 1, 0, 0, 1")
+	// a.Available = getIntVal("ds:6", "0.12.11.0") != 0 // XX
+	a.ContentRating = getStringVal("ds:4", "1, 2, 9, 0")
+	a.ContentRatingDescription = getStringVal("ds:4", "1, 2, 9, 2, 1")
+	a.DescriptionHTML = getStringVal("ds:4", "1, 2, 72, 0, 1")
 	a.Description = util.HTMLToText(a.DescriptionHTML)
-	a.Developer = getStringVal("ds:6", "0.12.5.1")
-	a.DeveloperAddress = getStringVal("ds:6", "0.12.5.4.0")
-	a.DeveloperEmail = getStringVal("ds:6", "0.12.5.2.0")
-	developerUrl := getStringVal("ds:6", "0.12.5.5.4.2")
-	a.DeveloperID = getStringVal("ds:6", "0.12.5.0.0")
-	a.DeveloperURL = play.BasicURL + developerUrl
-	a.DeveloperWebsite = getStringVal("ds:6", "0.12.5.3.5.2")
-	a.EditorsChoice = getStringVal("ds:6", "0.12.15.0") != ""
-	a.FamilyGenre = getStringVal("ds:6", "0.12.13.1.0")
-	a.FamilyGenreID = getStringVal("ds:6", "0.12.13.1.2")
+	a.Developer = getStringVal("ds:4", "1, 2, 68, 0")
+	a.DeveloperAddress = getStringVal("ds:4", "1, 2, 69, 2, 0")
+	a.DeveloperEmail = getStringVal("ds:4", "1, 2, 69, 1, 0")
+	//developerUrl := getStringVal("ds:6", "0.12.5.5.4.2") // XX
+	a.DeveloperID = getStringVal("ds:4", "1, 2, 68, 1, 4, 2")
+	// a.DeveloperURL = play.BasicURL + developerUrl
+	a.DeveloperWebsite = getStringVal("ds:6", "1, 2, 69, 0, 5, 2")
+	a.EditorsChoice = getStringVal("ds:4", "0, 12, 15, 0") != ""
+	// a.FamilyGenre = getStringVal("ds:4", "0.12.13.1.0")   // XXX
+	// a.FamilyGenreID = getStringVal("ds:6", "0.12.13.1.2") // XXX
 	a.Features = func() []*Feature {
 		var rs []*Feature
 		vv, ok := getVal("ds:6", "0.12.16.2")
@@ -224,26 +231,26 @@ func (a *App) loadDetails(ctx context.Context) error {
 		})
 		return rs
 	}()
-	a.Free = getIntVal("ds:4", "0.2.0.0.0.1.0.0") == 0
-	a.Genre = getStringVal("ds:6", "0.12.13.0.0")
-	a.GenreId = getStringVal("ds:6", "0.12.13.0.2")
-	a.HeaderImage = getStringVal("ds:6", "0.12.2.3.2")
+	a.Free = getIntVal("ds:4", "1, 2, 57, 0, 0, 0, 0, 1, 0, 0") == 0
+	a.Genre = getStringVal("ds:4", "1, 2, 79, 0, 0, 0")
+	a.GenreId = getStringVal("ds:4", "1, 2, 79, 0, 0, 2")
+	a.HeaderImage = getStringVal("ds:4", "1, 2, 96, 0, 3, 2")
 	a.IAPRange = getStringVal("ds:6", "0.12.12.0")
 	a.IAPOffers = a.IAPRange != ""
-	a.Icon = getStringVal("ds:6", "0.12.1.3.2")
-	a.Installs = getStringVal("ds:6", "0.12.9.0")
-	a.InstallsMin = getIntVal("ds:6", "0.12.9.1")
-	a.InstallsMax = getIntVal("ds:6", "0.12.9.2")
+	a.Icon = getStringVal("ds:4", "1, 2, 95, 0, 3, 2")
+	a.Installs = getStringVal("ds:4", "1, 2, 13, 0")
+	a.InstallsMin = getIntVal("ds:4", "1, 2, 13, 1")
+	a.InstallsMax = getIntVal("ds:4", "1, 2, 13, 2")
 	a.Price = &price.Price{
-		Currency: getStringVal("ds:4", "0.2.0.0.0.1.0.1"),
-		Value:    getFloatVal("ds:4", "0.2.0.0.0.1.0.0"), // / 1000000.00,
+		Currency: getStringVal("ds:4", "1, 2, 57, 0, 0, 0, 0, 1, 0, 1"),
+		Value:    getFloatVal("ds:4", "1, 2, 57, 0, 0, 0, 0, 1, 0, 0"), // / 1000000.00,
 	}
-	a.PriceText = getStringVal("ds:4", "0.2.0.0.0.1.0.2")
-	a.PrivacyPolicy = getStringVal("ds:6", "0.12.7.2")
-	a.Ratings = getIntVal("ds:7", "0.6.2.1")
+	a.PriceText = getStringVal("ds:4", "1, 2, 19, 0")
+	a.PrivacyPolicy = getStringVal("ds:4", "1, 2, 99, 0, 5, 2")
+	a.Ratings = getIntVal("ds:4", "1, 2, 51, 2, 1")
 	a.RatingsHistogram = func() map[int]int64 {
 		rm := make(map[int]int64)
-		mv, ok := getVal("ds:7", "0.6.1")
+		mv, ok := getVal("ds:4", "1, 2, 51, 1")
 		if !ok {
 			return rm
 		}
@@ -254,15 +261,15 @@ func (a *App) loadDetails(ctx context.Context) error {
 		rm[5] = mv.Get("5.1").Int()
 		return rm
 	}()
-	a.RecentChangesHTML = getStringVal("ds:6", "0.12.6.1")
+	a.RecentChangesHTML = getStringVal("ds:4", "1, 2, 144, 1, 1")
 	a.RecentChanges = util.HTMLToText(a.RecentChangesHTML)
-	a.Released = getStringVal("ds:6", "0.12.36")
-	a.ReviewsTotalCount = getIntVal("ds:7", "0.6.3.1")
-	a.Score = getFloatVal("ds:7", "0.6.0.1")
-	a.ScoreText = getStringVal("ds:7", "0.6.0.0")
+	a.Released = getStringVal("ds:4", "1, 2, 10, 0")
+	a.ReviewsTotalCount = getIntVal("ds:4", "1, 2, 51, 3, 1")
+	a.Score = getFloatVal("ds:4", "1, 2, 51, 0, 1")
+	a.ScoreText = getStringVal("ds:4", "1, 2, 51, 0, 0")
 	a.Screenshots = func() []string {
 		var rs []string
-		vv, ok := getVal("ds:6", "0.12.0")
+		vv, ok := getVal("ds:4", "1, 2, 78, 0")
 		if !ok {
 			return rs
 		}
@@ -272,17 +279,17 @@ func (a *App) loadDetails(ctx context.Context) error {
 		})
 		return rs
 	}()
-	a.Size = getStringVal("ds:3", "0")
-	a.Summary = getStringVal("ds:6", "0.10.1.1")
-	a.Title = getStringVal("ds:6", "0.0.0")
-	a.Updated = time.Unix(getIntVal("ds:6", "0.12.8.0"), 0)
-	a.Version = getStringVal("ds:3", "1")
-	a.Video = getStringVal("ds:6", "0.12.3.0.3.2")
-	a.VideoImage = getStringVal("ds:6", "0.12.3.1.3.2")
+	// a.Size = getStringVal("ds:8", "0")
+	a.Summary = getStringVal("ds:4", "1, 2, 73, 0, 1")
+	a.Title = getStringVal("ds:4", "1, 2, 0, 0")
+	a.Updated = time.Unix(getIntVal("ds:4", "1, 2, 145, 0, 1, 0"), 0)
+	a.Version = getStringVal("ds:4", "1, 2, 140, 0, 0, 0") // Varies with device
+	a.Video = getStringVal("ds:4", "1, 2, 100, 0, 0, 3, 2")
+	a.VideoImage = getStringVal("ds:4", "1, 2, 100, 1, 0, 3, 2")
 
-	if similarURL := getStringVal("ds:8", "1.1.0.0.3.4.2"); similarURL != "" {
-		a.SimilarURL = play.BasicURL + similarURL
-	}
+	//if similarURL := getStringVal("ds:8", "1.1.0.0.3.4.2"); similarURL != "" {
+	//	a.SimilarURL = play.BasicURL + similarURL
+	//}
 
 	return nil
 }

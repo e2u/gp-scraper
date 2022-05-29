@@ -61,6 +61,28 @@ func TestNew(t *testing.T) {
 			},
 			want: nil,
 		},
+		{
+			name: "com.fast.rupee-free-app",
+			args: args{
+				appId: "com.fast.rupee",
+				opt: &Options{
+					Country:  "us",
+					Language: "us-EN",
+				},
+			},
+			want: nil,
+		},
+		{
+			name: "pdf.tap.scanner-paid-app",
+			args: args{
+				appId: "pdf.tap.scanner",
+				opt: &Options{
+					Country:  "us",
+					Language: "us-EN",
+				},
+			},
+			want: nil,
+		},
 	}
 
 	ctx := context.TODO()

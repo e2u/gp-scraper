@@ -47,7 +47,6 @@ type Review struct {
 }
 
 func Pages(ctx context.Context, appId string, opt *Options, fn func([]*Review) bool) error {
-
 	if opt == nil {
 		opt = &Options{
 			Country:    play.DefaultCountry,
@@ -60,9 +59,11 @@ func Pages(ctx context.Context, appId string, opt *Options, fn func([]*Review) b
 	if opt.Country == "" {
 		opt.Country = play.DefaultCountry
 	}
+
 	if opt.Language == "" {
 		opt.Language = play.DefaultLanguage
 	}
+
 	if opt.PageNumber <= 0 || opt.PageNumber > 199 {
 		opt.PageNumber = DefaultPageNumber
 	}
@@ -87,11 +88,13 @@ nextPage:
 
 func loadReviews(ctx context.Context, appId string, opt *Options, nextToken string) ([]*Review, string, error) {
 	payload := url.Values{}
+
 	if nextToken == "" {
 		payload.Set("f.req", fmt.Sprintf(`[[["UsvDTd","[null,null,[2,%d,[%d,null,null],null,[]],[\"%s\",7]]",null,"generic"]]]`, opt.Sorting, opt.PageNumber, appId))
 	} else {
 		payload.Set("f.req", fmt.Sprintf(`[[["UsvDTd","[null,null,[2,%d,[%d,null,\"%s\"],null,[]],[\"%s\",7]]",null,"generic"]]]`, opt.Sorting, opt.PageNumber, nextToken, appId))
 	}
+
 	result, err := util.BatchExecute(ctx, payload.Encode(), opt.Country, opt.Language)
 	if err != nil {
 		logrus.Errorf("load rw batch execute error=%v", err)
@@ -125,5 +128,6 @@ func loadReviews(ctx context.Context, appId string, opt *Options, nextToken stri
 		}()
 		rs = append(rs, r)
 	}
+
 	return rs, nextToken, nil
 }
